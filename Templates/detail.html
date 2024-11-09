@@ -1,0 +1,167 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body text-center">
+        <h1 class="card-title" style="color: blue;">Enregistrement des informations sur la chambre</h1>
+      </div>
+    </div>
+  </div>
+  <form method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-lg-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Image du Quartier</h4>
+                    <div class="ct-chart ct-perfect-fourth" id="ct-chart-stacked-bar">
+                        {% if ville.imageQ %}
+                        <img src="{{ ville.imageQ.url }}"  
+                             style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; display: block; margin: auto;">
+                    {% else %}
+                        <p>Aucune image disponible</p>
+                    {% endif %}
+                    </div>
+                    <br/>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Image de la Maison</h4>
+                    <div class="ct-chart ct-perfect-fourth" id="ct-chart-horizontal-bar">
+                         {% if ville.imageM %}
+                        <img src="{{ ville.imageM.url }}"  
+                             style="width: 300px; height: 300px; border-radius: 50%; object-fit: cover; display: block; margin: auto;">
+                        {% else %}
+                        <p>Aucune image disponible</p>
+                    {% endif %}</div>
+                    <br/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 grid-margin stretch-card">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title"> Image de la Chambre</h4>
+                    <div class="ct-chart ct-perfect-fourth" id="ct-chart-pie">
+                        {% if ville.imageQ %}
+                            <img src="{{ ville.imageCH.url }}" 
+                                 style="width: 500px; height: 500px; border-radius: 50%; object-fit: cover; display: block; margin: auto;">
+                        {% else %}
+                            <p>Aucune image disponible</p>
+                        {% endif %}
+                    </div>
+                    <br/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-center">
+                    <div class="form-group">
+                        <label class="d-flex justify-content-center">Numero de la Maison</label>
+                        <input type="text" value="{{ ville.numM }}" class="form-control"readonly />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label"> Nom de la ville </label>
+                            <div class="col-sm-9">
+                                <input type="text" value="{{ ville.nomV }}" class="form-control" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Nom du Quartier </label>
+                            <div class="col-sm-9">
+                                <input type="text" value="{{ ville.nomQ }}" class="form-control" readonly/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Latitude</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="{{ ville.latitude }}" id="latitude" name="latitude" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Longitude</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" value="{{ ville.longitude }}" id="longitude" name="longitude" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    <script>
+        function updateFileName(fileInputId, fileInfoId) {
+          const input = document.getElementById(fileInputId);
+          const info = document.getElementById(fileInfoId);
+          info.value = input.files.length > 0 ? input.files[0].name : 'Upload Image';
+        }
+      
+        function getLocation() {
+          const status = document.getElementById('status');
+          status.textContent = "Tentative de récupération de la position...";
+      
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+              function (position) {
+                document.getElementById("latitude").value = position.coords.latitude;
+                document.getElementById("longitude").value = position.coords.longitude;
+                status.textContent = "Position obtenue avec succès!";
+              },
+              function (error) {
+                switch (error.code) {
+                  case error.PERMISSION_DENIED:
+                    status.textContent = "L'utilisateur a refusé la demande de géolocalisation.";
+                    break;
+                  case error.POSITION_UNAVAILABLE:
+                    status.textContent = "Les informations de position ne sont pas disponibles.";
+                    break;
+                  case error.TIMEOUT:
+                    status.textContent = "La demande de géolocalisation a expiré.";
+                    break;
+                  case error.UNKNOWN_ERROR:
+                    status.textContent = "Une erreur inconnue s'est produite.";
+                    break;
+                }
+              }
+            );
+          } else {
+            status.textContent = "La géolocalisation n'est pas supportée par ce navigateur.";
+          }
+        }
+      
+        document.getElementById("villeForm").onsubmit = function () {
+          const latitude = document.getElementById('latitude').value;
+          const longitude = document.getElementById('longitude').value;
+      
+          if (!latitude || !longitude) {
+            alert("Veuillez d'abord récupérer votre position avant de soumettre le formulaire.");
+            return false;
+          }
+          return true;
+        }
+      </script>
+   
+  
+
+{% endblock %}

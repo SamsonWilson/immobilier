@@ -1,0 +1,189 @@
+{% extends "index.html" %}
+{% block content %}
+
+<div class="col-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body text-center">
+      <h1 class="card-title" style="color: blue;">Enregistrement des informations sur la chambre</h1>
+    </div>
+  </div>
+</div>
+
+<div class="col-12 grid-margin stretch-card">
+  <div class="card">
+    <div class="card-body">
+      <form class="forms-sample" method="POST" enctype="multipart/form-data" id="villeForm">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="nomVille">Nom de Ville</label>
+          <input type="text" class="form-control" id="nomVille" placeholder="Entrez le nom" name="nomV">
+        </div>
+
+        <div class="form-group">
+          <label for="nomQuartier">Nom du Quartier</label>
+          <input type="text" class="form-control" id="nomQuartier" placeholder="Entrez le nom" name="nomQ">
+        </div>
+
+        <div class="form-group">
+          <label for="imageQuartier">Image du Quartier</label>
+          <div class="input-group col-xs-12">
+            <input type="text" class="form-control file-upload-info" id="quartierFileInfo" disabled placeholder="Upload Image">
+            <span class="input-group-append">
+              <button class="file-upload-browse btn btn-primary" type="button" onclick="document.getElementById('imageQuartier').click();">Upload</button>
+            </span>
+            <input type="file" id="imageQuartier" style="display: none;" name="imageQ" onchange="updateFileName('imageQuartier', 'quartierFileInfo')">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="numMaison">Numéro de la Maison</label>
+          <input type="text" class="form-control" id="numMaison" placeholder="Entrez le numéro" name="numM">
+        </div>
+
+        <div class="form-group">
+          <label for="imageMaison">Image de la Maison</label>
+          <div class="input-group col-xs-12">
+            <input type="text" class="form-control file-upload-info" id="maisonFileInfo" disabled placeholder="Upload Image">
+            <span class="input-group-append">
+              <button class="file-upload-browse btn btn-primary" type="button" onclick="document.getElementById('imageMaison').click();">Upload</button>
+            </span>
+            <input type="file" id="imageMaison" style="display: none;" name="imageM" onchange="updateFileName('imageMaison', 'maisonFileInfo')">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageChambre">Image de la Chambre</label>
+          <div class="input-group col-xs-12">
+            <input type="text" class="form-control file-upload-info" id="chambreFileInfo" disabled placeholder="Upload Image">
+            <span class="input-group-append">
+              <button class="file-upload-browse btn btn-primary" type="button" onclick="document.getElementById('imageChambre').click();">Upload</button>
+            </span>
+            <input type="file" id="imageChambre" style="display: none;" name="imageCH" onchange="updateFileName('imageChambre', 'chambreFileInfo')">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="descriptionChambre">Description de la Chambre</label>
+          <textarea class="form-control" id="descriptionChambre" name="descriptionV" placeholder="Entrez la description"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="latitude">Latitude</label>
+          <input type="text" class="form-control" id="latitude" name="latitude" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="longitude">Longitude</label>
+          <input type="text" class="form-control" id="longitude" name="longitude" readonly>
+        </div>
+
+        <button type="button" onclick="getLocation()" class="btn btn-primary mr-2">Récupérer ma position actuelle</button>
+        <p id="status"></p>
+
+        <input type="hidden" class="form-control" value="{{ user.id }}" name="user">
+
+        <button type="submit" class="btn btn-primary mr-2">Submit</button>
+        <button type="reset" class="btn btn-light">Cancel</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateFileName(fileInputId, fileInfoId) {
+    const input = document.getElementById(fileInputId);
+    const info = document.getElementById(fileInfoId);
+    info.value = input.files.length > 0 ? input.files[0].name : 'Upload Image';
+  }
+
+  {% comment %} function getLocation() {
+    const status = document.getElementById('status');
+    status.textContent = "Tentative de récupération de la position...";
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          document.getElementById("latitude").value = position.coords.latitude;
+          document.getElementById("longitude").value = position.coords.longitude;
+          status.textContent = "Position obtenue avec succès!";
+        },
+        function (error) {
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              status.textContent = "L'utilisateur a refusé la demande de géolocalisation.";
+              break;
+            case error.POSITION_UNAVAILABLE:
+              status.textContent = "Les informations de position ne sont pas disponibles.";
+              break;
+            case error.TIMEOUT:
+              status.textContent = "La demande de géolocalisation a expiré.";
+              break;
+            case error.UNKNOWN_ERROR:
+              status.textContent = "Une erreur inconnue s'est produite.";
+              break;
+          }
+        }
+      );
+    } else {
+      status.textContent = "La géolocalisation n'est pas supportée par ce navigateur.";
+    }
+  } {% endcomment %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  document.getElementById("villeForm").onsubmit = function () {
+    const latitude = document.getElementById('latitude').value;
+    const longitude = document.getElementById('longitude').value;
+
+    if (!latitude || !longitude) {
+      alert("Veuillez d'abord récupérer votre position avant de soumettre le formulaire.");
+      return false;
+    }
+    return true;
+  }
+</script>
+
+
+
+<script>
+  function getLocation() {
+    const status = document.getElementById('status');
+    const longitudeInput = document.getElementById('longitude');
+    const latitudeInput = document.getElementById('latitude');
+    
+    if (navigator.geolocation) {
+      status.textContent = "Localisation en cours...";
+      
+      // Récupérer la position GPS
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Afficher les valeurs dans les champs correspondants
+        longitudeInput.value = longitude;
+        latitudeInput.value = latitude;
+
+        status.textContent = "Localisation réussie!";
+      }, function(error) {
+        status.textContent = "Impossible de récupérer la localisation: " + error.message;
+      });
+    } else {
+      status.textContent = "La géolocalisation n'est pas supportée par ce navigateur.";
+    }
+  }
+</script>
+
+{% endblock %}

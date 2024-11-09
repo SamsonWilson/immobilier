@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire d'enregistrement</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .form-container {
+            background-color: #fff;
+            width: 400px;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            margin-right: 20px;
+        }
+        .image-container {
+            width: 800px;
+            height: 500px;
+            overflow: hidden;
+            position: relative;
+        }
+        .image-container img {
+            width: 95%;
+            height: 80%;
+            object-fit: cover;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            overflow-x: auto;
+        }
+        .gallery img {
+            max-width: 100px;
+            height: auto;
+            margin: 5px;
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        select[type="text"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            background-color: #4caf50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .navigation-button {
+            position: absolute;
+            top: 40%;
+            transform: translateY(-40%);
+            background-color: rgb(255, 251, 251);
+            border: none;
+            color: black;
+            font-size: 24px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .navigation-button:hover {
+            background-color: rgba(20, 19, 19, 0.9);
+        }
+        #prevButton {
+            left: 10px;
+        }
+        #nextButton {
+            right: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="image-container">
+            {% if ville.imageCH %}
+            <img id="mainImage" src="{{ ville.imageCH.url }}" alt="Image du quartier {{ ville.nomV }}" class="uniform-size-image">
+            <p>{{ ville.nomV }}</p>
+            {% else %}
+            <p>Aucune image disponible</p>
+            {% endif %}
+            <button id="prevButton" class="navigation-button" onclick="showPreviousImage()">&lt;</button>
+            <button id="nextButton" class="navigation-button" onclick="showNextImage()">&gt;</button>
+            <div class="gallery">
+                {% if ville.imageCH %}
+                <img src="{{ ville.imageCH.url }}" alt="Image du quartier {{ ville.nomV }}" class="uniform-size-image">
+                {% else %}
+                <p>Aucune image disponible</p>
+                {% endif %}
+                {% if ville.imageQ %}
+                <img id="mainImage" src="{{ ville.imageQ.url }}" alt="Image du quartier {{ ville.nomV }}" class="uniform-size-image">
+                <p>{{ ville.nomV }}</p>
+                {% else %}
+                <p>Aucune image disponible</p>
+                {% endif %}
+                {% if ville.imageV %}
+                <img id="mainImage" src="{{ ville.imageV.url }}" alt="Image du quartier {{ ville.nomV }}" class="uniform-size-image">
+                <p>{{ ville.nomV }}</p>
+                {% else %}
+                <p>Aucune image disponible</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-container">
+            <form action="#" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label for="nom">Nom :</label>
+                <input type="text" id="nom" name="nom"  required>
+                <label for="prenom">Prénom :</label>
+                <input type="text" id="prenom" name="prenom"  required>
+                <label for="email">Email :</label>
+                <input type="email" id="email" name="email" required>
+                <label for="sexe">Sexe :</label>
+                <select name="sexe" id="sexe" type="text">
+                    <option value="masculin">Masculin</option>
+                    <option value="feminin">Féminin</option>
+                </select>
+                <label for="tel1">Téléphone :</label>
+                <input type="text" id="tel1" name="tel1" required>
+                <label for="adress">Localité :</label>
+                <input type="text" id="adress" name="adresse" required>
+                <input type="submit" value="Demande de visite">
+                <hr>
+                {% comment %} <input type="submit" value="Reserver une chambre"> {% endcomment %}
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const mainImage = document.getElementById('mainImage');
+        const galleryImages = document.querySelectorAll('.gallery img');
+        let currentIndex = 0;
+        function showNextImage() {
+            currentIndex = (currentIndex + 1) % galleryImages.length;
+            mainImage.src = galleryImages[currentIndex].src;
+        }
+        function showPreviousImage() {
+            currentIndex = (currentIndex - 1 + galleryImages.length) % galleryImages.length;
+            mainImage.src = galleryImages[currentIndex].src;
+        }
+    </script>
+</body>
+
+</html>

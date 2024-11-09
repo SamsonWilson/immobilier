@@ -1,0 +1,74 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        
+        <title>{% block head_title %}Stellar Admin{% endblock %}</title>
+
+        <!-- plugins:css -->
+        <link rel="stylesheet" href="{% static 'vendors/flag-icon-css/css/flag-icon.min.css' %}">
+        <link rel="stylesheet" href="{% static 'vendors/simple-line-icons/css/simple-line-icons.css' %}">
+        <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/style.css' %}">
+        <link rel="icon" href="{% static 'images/favicon.png' %}" type="image/png">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+
+        <style>
+            .form-group {
+                margin-top: 10px;
+            }
+        </style>
+
+        {% block extra_head %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block body %}
+        <div class="container-scroller">
+            <div class="container-fluid page-body-wrapper full-page-wrapper">
+                <div class="content-wrapper d-flex align-items-center auth">
+                    <div class="row flex-grow">
+                        <div class="col-lg-4 mx-auto">
+                            <div class="auth-form-light text-left p-5">
+                                <div class="brand-logo">
+                                    <img src="{% static 'images/logo.svg' %}" alt="Logo" />
+                                </div>
+                                {% if messages %}
+                                <div class="p-2">
+                                    {% for message in messages %}
+                                    <div class="text-center border-bottom">{{ message }}</div>
+                                    {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    <div class="p-3 mb-3 bg-dark">
+                                        <div class="container d-flex justify-content-between">
+                                            {% if user.is_authenticated %}
+                                             {% comment %} <div><a class="text-light" href="{% url 'account_email' %}">Change E-mail</a></div> {% endcomment %}
+                                            <div><a class="text-light" href="{% url 'IFadmin' %}">Home</a></div>
+                                            <div><a class="text-light" href="{% url 'account_logout' %}">Se déconnecter</a></div> 
+                                            {% comment %} <div><a class="text-light" href="{% url 'index' %}">Se déconnecter</a></div>  {% endcomment %}
+                                            {% else %}
+                                                    <div><a class="text-light" href="{% url 'account_login' %}">Connexion</a></div> 
+                                                    <div><a class="text-light" href="{% url 'account_signup' %}">S'enregistrer</a></div>  
+                                            {% endif %}
+                                            
+                                        </div>
+                                    </div>
+                                    {% block content %}
+                                    {% endblock %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endblock %}
+            {% block extra_body %}
+            {% endblock %}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+        </body>
+        </html>

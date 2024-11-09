@@ -1,0 +1,105 @@
+{% extends "index.html" %}
+{% block content %}
+
+<style>
+    .uniform-image {
+        width: 500px; 
+        height: 500px;
+        object-fit: cover; 
+        display: block;
+        margin: auto;
+    }
+</style>
+
+
+<div class="col-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body text-center">
+            <h1 class="card-title" style="color: blue;">Liste Des Chambres</h1>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Ville</th>
+                        <th>Quartier</th>
+                        <th>Numéro de la maison</th>
+                        <th>Coordonnées GPS</th>
+                        <th>Détails</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ville in object_list %}
+                    <tr>
+                        <td class="py-1">
+                            {% if ville.imageCH %}
+                            <img src="{{ ville.imageCH.url }}" alt="Image du quartier {{ ville.nomV }}" class="uniform-image" style="width: 80px; height: 80px;object-fit: cover; display: block;margin: auto;">
+                            {% else %}
+                            <p>Aucune image disponible</p>
+                            {% endif %}
+
+                        </td>
+                        <td>{{ ville.nomV }}</td>
+                        <td>{{ ville.nomQ }}</td>
+                        <td>{{ ville.numM }}</td>
+                        <td>
+                          {% comment %} <a href="https://www.google.com/maps/dir/?api=1&destination={{ ville.latitude }},{{ ville.longitude }}" target="_blank">
+                            Obtenir l'itinéraire
+                        </a> {% endcomment %}
+                        <a href="https://www.google.com/maps/dir/?api=1&origin=My%20Location&destination={{ ville.latitude }},{{ ville.longitude }}" target="_blank">
+                          Démarrer l'itinéraire
+                      </a>
+                        
+                          {% comment %} <a href="https://www.google.com/maps/@{{ ville.latitude }},{{ ville.longitude }},15z" target="_blank">
+                            {{ ville.latitude }}, {{ ville.longitude }} {% endcomment %}
+                        </a>
+                        
+                      </td>
+                        {% comment %} <td>{{ ville.latitude }}, {{ ville.longitude }}</td> {% endcomment %}
+                        
+                        <td>
+                            <a href="{% url 'ville_modifier' ville.id %}" class="btn btn-warning" style="padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'ville_detail' ville.id %}" class="btn btn-info" style="padding: 0.25rem 0.5rem; font-size: 0.875rem;">
+                                <i class="fas fa-eye"></i> 
+                            </a>
+                            <form action="{% url 'ville_supprimer' ville.id %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.875rem;" onclick="return confirm('Voulez-vous vraiment supprimer cet élément ?');">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                        
+                        
+                        
+
+                        {% comment %} <td>
+                            <a href="{% url 'ville_modifier' ville.id %}" class="btn btn-warning">Modifier</a>
+                          <a href="{% url 'ville_detail' ville.id %}" class="btn btn-info details-button">Voir Détails</a>
+                         </td> {% endcomment %}
+                        
+                        
+                        
+                            {% comment %} <a href="{% url 'détails_ville' ville.id %}">Voir Détails</a> {% endcomment %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6">Aucune chambre disponible.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
